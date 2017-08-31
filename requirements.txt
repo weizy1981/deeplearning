@@ -4,3 +4,4 @@ pandas
 matplotlib
 Theano
 TensorFlow
+keras
