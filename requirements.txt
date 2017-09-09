@@ -5,3 +5,4 @@ matplotlib
 Theano
 TensorFlow
 keras
+scikit-learn
