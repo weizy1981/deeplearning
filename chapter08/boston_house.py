@@ -8,6 +8,9 @@ from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
+import datetime
+
+print(datetime.datetime.now())
 
 # 导入数据
 dataset = datasets.load_boston()
@@ -78,3 +81,5 @@ params = results.cv_results_['params']
 
 for mean, std, param in zip(means, stds, params):
     print('%f (%f) with: %r' % (mean, std, param))
+
+print(datetime.datetime.now())
