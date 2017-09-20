@@ -58,11 +58,11 @@ print('Standardize: %.2f (%.2f) MSE' % (results.mean(), results.std()))
 
 # 调参选择最优模型
 param_grid = {}
-param_grid['units_list'] = [[6], [20], [13, 6], [20, 6]]
+param_grid['units_list'] = [[20], [13, 6]]
 param_grid['optimizer'] = ['rmsprop', 'adam']
-param_grid['init'] = ['glorot_uniform', 'normal', 'uniform']
-param_grid['epochs'] = [50, 100, 150, 200]
-param_grid['batch_size'] = [5, 10, 20]
+param_grid['init'] = ['glorot_uniform', 'normal']
+param_grid['epochs'] = [100, 200]
+param_grid['batch_size'] = [5, 20]
 
 # 调参
 scaler = StandardScaler()
