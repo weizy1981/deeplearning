@@ -3,7 +3,7 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.utils import to_categorical
-from keras.models import model_from_json
+from keras.models import model_from_yaml
 
 
 # 导入数据
@@ -39,21 +39,21 @@ scores = model.evaluate(x, Y_labels, verbose=0)
 print('%s: %.2f%%' % (model.metrics_names[1], scores[1] * 100))
 
 # 模型保存成Json文件
-model_json = model.to_json()
-with open('model.json', 'w') as file:
-    file.write(model_json)
+model_yaml = model.to_yaml()
+with open('model.yaml', 'w') as file:
+    file.write(model_yaml)
 
 # 保存模型的权重值
-model.save_weights('model.json.h5')
+model.save_weights('model.yaml.h5')
 
 
 # 从Json加载模型
-with open('model.json', 'r') as file:
+with open('model.yaml', 'r') as file:
     model_json = file.read()
 
 # 加载模型
-new_model = model_from_json(model_json)
-new_model.load_weights('model.json.h5')
+new_model = model_from_yaml(model_json)
+new_model.load_weights('model.yaml.h5')
 
 # 编译模型
 new_model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
