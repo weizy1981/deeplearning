@@ -4,7 +4,6 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.utils import to_categorical
 from keras.callbacks import ModelCheckpoint
-from matplotlib import pyplot as plt
 
 # 导入数据
 dataset = datasets.load_iris()
