@@ -3,6 +3,7 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dropout
 from keras.layers import Dense
+from keras.constraints import maxnorm
 from keras.optimizers import SGD
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import cross_val_score
@@ -23,10 +24,10 @@ np.random.seed(seed)
 def create_model(init='glorot_uniform'):
     # 构建模型
     model = Sequential()
-    model.add(Dense(units=4, activation='relu', input_dim=4, kernel_initializer=init))
-    model.add(Dropout(rate=0.5))
-    model.add(Dense(units=6, activation='relu', kernel_initializer=init))
-    model.add(Dropout(rate=0.5))
+    model.add(Dense(units=4, activation='relu', input_dim=4, kernel_initializer=init, kernel_constraint=maxnorm(3)))
+    model.add(Dropout(rate=0.2))
+    model.add(Dense(units=6, activation='relu', kernel_initializer=init, kernel_constraint=maxnorm(3)))
+    model.add(Dropout(rate=0.2))
     model.add(Dense(units=3, activation='softmax', kernel_initializer=init))
 
     # 定义Dropout
