@@ -35,7 +35,7 @@ model = create_model()
 
 # 设置检查点
 filepath = 'weights.best.h5'
-checkpoint = ModelCheckpoint(filepath=filepath, monitor='val_acc', verbose=1, save_weights_only=True, mode='max')
+checkpoint = ModelCheckpoint(filepath=filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
 callback_list = [checkpoint]
 model.fit(x, Y_labels, validation_split=0.2, epochs=200, batch_size=5, verbose=0, callbacks=callback_list)
 

@@ -17,7 +17,7 @@ seed = 7
 np.random.seed(seed)
 
 # 构建模型函数
-def create_model(init='glorot_uniform', epoch_s=200):
+def create_model(init='glorot_uniform'):
     # 构建模型
     model = Sequential()
     model.add(Dense(units=4, activation='relu', input_dim=4, kernel_initializer=init))
@@ -27,7 +27,7 @@ def create_model(init='glorot_uniform', epoch_s=200):
     #模型优化
     learningRate = 0.1
     momentum = 0.9
-    decay_rate = learningRate / epoch_s
+    decay_rate = 0.005
     sgd = SGD(lr=learningRate, momentum=momentum, decay=decay_rate, nesterov=False)
 
     # 编译模型
@@ -36,5 +36,5 @@ def create_model(init='glorot_uniform', epoch_s=200):
     return model
 
 epochs = 200
-model = KerasClassifier(build_fn=create_model, epoch_s=epochs, epochs=epochs, batch_size=5, verbose=1)
+model = KerasClassifier(build_fn=create_model, epochs=epochs, batch_size=5, verbose=1)
 model.fit(x, Y)
