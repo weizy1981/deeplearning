@@ -39,6 +39,7 @@ def create_model():
     model.add(Dropout(0.2))
     model.add(Flatten())
     model.add(Dense(units=128, activation='relu'))
+    model.add(Dense(units=50, activation='relu'))
     model.add(Dense(units=10, activation='softmax'))
 
     # 编译模型
@@ -48,5 +49,5 @@ def create_model():
 model = create_model()
 model.fit(X_train, y_train, epochs=10, batch_size=200, verbose=2)
 
-score = model.evaluate(X_validation, y_validation)
+score = model.evaluate(X_validation, y_validation, verbose=0)
 print('CNN_Large: %.2f%%' % (score[1] * 100))
