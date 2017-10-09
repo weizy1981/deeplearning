@@ -6,3 +6,4 @@ TensorFlow
 keras
 scikit-learn
 h5py
+Pillow
