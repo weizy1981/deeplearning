@@ -48,6 +48,8 @@ def scheduler(epoch):
 
 if __name__ == '__main__':
 
+    np.random.seed(seed=7)
+
     # load data
     (x_train, y_train), (x_validation, y_validation) = cifar10.load_data()
     y_train = keras.utils.to_categorical(y_train, num_classes)
