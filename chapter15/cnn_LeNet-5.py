@@ -84,3 +84,7 @@ if __name__ == '__main__':
                         validation_data=(x_validation, y_validation))
     # save model
     model.save('lenet.h5')
+
+    # show model
+    from keras.utils.vis_utils import plot_model
+    plot_model(model, to_file='LeNet.png', show_shapes=True)
