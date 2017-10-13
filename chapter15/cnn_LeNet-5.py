@@ -71,6 +71,7 @@ if __name__ == '__main__':
     change_lr = LearningRateScheduler(scheduler)
     cbks = [change_lr, tb_cb]
 
+    '''
     # using real-time data augmentation
     print('Using real-time data augmentation.')
     datagen = ImageDataGenerator(horizontal_flip=True,
@@ -85,6 +86,10 @@ if __name__ == '__main__':
                         callbacks=cbks,
                         verbose=2,
                         validation_data=(x_validation, y_validation))
+    '''
+
+    model.fit(x_train, y_train, batch_size=batch_size, callbacks=cbks,
+              epochs=epochs, validation_data=(x_validation, y_validation), verbose=2)
     # save model
     model.save('lenet.h5')
 
