@@ -7,3 +7,4 @@ keras
 scikit-learn
 h5py
 Pillow
+pydot
