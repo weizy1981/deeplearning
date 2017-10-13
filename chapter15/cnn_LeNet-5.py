@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     # build network
     model = build_model()
-    print(model.summary())
+    model.summary()
 
     # set callback
     tb_cb = TensorBoard(log_dir=log_filepath, histogram_freq=0)
@@ -83,10 +83,11 @@ if __name__ == '__main__':
                         steps_per_epoch=iterations,
                         epochs=epochs,
                         callbacks=cbks,
+                        verbose=2,
                         validation_data=(x_validation, y_validation))
     # save model
     model.save('lenet.h5')
 
     # show model
-    from keras.utils.vis_utils import plot_model
-    plot_model(model, to_file='LeNet.png', show_shapes=True)
+    #from keras.utils.vis_utils import plot_model
+    #plot_model(model, to_file='LeNet.png', show_shapes=True)
