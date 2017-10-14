@@ -112,5 +112,5 @@ if __name__ == '__main__':
 
     # start training
     model.fit_generator(datagen.flow(x_train, y_train, batch_size=batch_size), steps_per_epoch=iterations,
-                        epochs=epochs, callbacks=cbks, validation_data=(x_test, y_test))
+                        epochs=epochs, callbacks=cbks, validation_data=(x_test, y_test), verbose=2)
     model.save('nin.h5')
