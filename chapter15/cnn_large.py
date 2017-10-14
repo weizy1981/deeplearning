@@ -45,8 +45,11 @@ def create_model(epochs=25):
     model.add(Conv2D(128, (3, 3), activation='relu', padding='same', kernel_constraint=maxnorm(3)))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Flatten())
+    model.add(Dropout(0.2))
+    model.add(Dense(1024, activation='relu', kernel_constraint=maxnorm(3)))
+    model.add(Dropout(0.2))
     model.add(Dense(512, activation='relu', kernel_constraint=maxnorm(3)))
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.2))
     model.add(Dense(10, activation='softmax'))
     lrate = 0.01
     decay = lrate / epochs
