@@ -37,11 +37,6 @@ if __name__ == '__main__':
 
     # 导入数据
     data = read_csv(filename, usecols=[1], engine='python', skipfooter=footer)
-    #图表展示
-    plt.plot(data)
-    plt.show()
-    # 查看最初的5条记录
-    print(data.head(5))
     dataset = data.values.astype('float32')
     train_size = int(len(dataset) * 0.67)
     validation_size = len(dataset) - train_size
