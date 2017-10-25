@@ -64,9 +64,9 @@ if __name__ == '__main__':
         model.reset_states()
 
     # 模型预测数据
-    predict_train = model.predict(X_train)
+    predict_train = model.predict(X_train, batch_size=batch_size)
     model.reset_states()
-    predict_validation = model.predict(X_validation)
+    predict_validation = model.predict(X_validation, batch_size=batch_size)
 
     # 反标准化数据 --- 目的是保证MSE的准确性
     predict_train = scaler.inverse_transform(predict_train)
