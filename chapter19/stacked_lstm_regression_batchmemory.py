@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     # 训练模型
     model = build_model()
-    for i in range(100):
+    for i in range(epochs):
         history = model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=0, shuffle=False)
         mean_loss = np.mean(history.history['loss'])
         print('mean loss %.5f for loop %s' % (mean_loss, str(i)))
