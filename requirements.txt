@@ -8,3 +8,5 @@ scikit-learn
 h5py
 Pillow
 pydot
+nltk
+gensim
