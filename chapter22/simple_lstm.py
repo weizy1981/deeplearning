@@ -6,8 +6,8 @@ from keras.layers import Dense
 from keras.layers import Dropout
 from keras.layers.embeddings import Embedding
 import numpy as np
-from keras.preprocessing import sequence
 from keras.utils import np_utils
+from pyecharts import WordCloud
 
 filename = 'Alice.txt'
 document_split = ['.', ',', '?', '!', ';']
@@ -16,12 +16,14 @@ epochs = 20
 model_json_file = 'simple_model.json'
 model_hd5_file = 'simple_model.hd5'
 dict_file = 'dict_file.txt'
+dict_len = 3123
+max_len = 20
+document_max_len = 33200
 
 def load_dataset():
     # 读入文件
     with open(file=filename, mode='r') as file:
         document = []
-        documents = []
         lines = file.readlines()
         for line in lines:
             # 删除非内容字符
@@ -31,83 +33,94 @@ def load_dataset():
                 for str in word_tokenize(value):
                     # 跳过章节标题
                     if str == 'CHAPTER':
-                        # documents.append(document)
-                        # document = []
                         break
-                    # 按照特定的标点符号分割成不同的句子
-                    elif str in document_split:
-                        document.append(str)
-                        documents.append(document)
-                        document = []
-                    elif str != '':
+                    else:
                         document.append(str)
 
-        return documents
+        return document
 
 def clear_data(str):
     # 删除字符串中的特殊字符或换行符
     value = str.replace('\ufeff', '').replace('\n', '')
     return value
 
-def word_to_integer(documents):
-    # 生产字典
-    dic = corpora.Dictionary(documents)
+def word_to_integer(document):
+    # 生成字典
+    dic = corpora.Dictionary([document])
     # 保存字典到文本文件
     dic.save_as_text(dict_file)
     dic_set = dic.token2id
     #print(dic)
     # 将单词转换为整数
     values = []
-    max_len = 0
-    for document in documents:
-        value = []
-        for word in document:
-            # 查找每个单词在字典中的编码
-            value.append(dic_set[word])
-        values.append(value)
-        if max_len < len(value):
-            max_len = len(value)
-    return values, max_len, len(dic_set)
+    for word in document:
+        # 查找每个单词在字典中的编码
+        values.append(dic_set[word])
+    return values
 
-def build_model(dict_len, words_len, class_num):
+def build_model():
     model = Sequential()
-    model.add(Embedding(input_dim=dict_len, output_dim=32, input_length=words_len))
+    model.add(Embedding(input_dim=dict_len, output_dim=32, input_length=max_len))
     model.add(LSTM(units=256))
     model.add(Dropout(0.2))
-    model.add(Dense(units=class_num, activation='softmax'))
+    model.add(Dense(units=dict_len, activation='softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='adam')
     model.summary()
     return model
 
-def make_y(values):
-    y = []
-    for value in values:
-        y.append(value[0])
-    # 将次行的第一个单词作为当行的输出
-    y = np.array(y).reshape(len(y), 1)
-    y = y[1:, :]
+def make_y(document):
+    dataset = make_dataset(document)
+    y = dataset[1:dataset.shape[0], 0]
     return y
 
-def make_x(values, max_len):
-    # 补齐句子的长度
-    dataset = sequence.pad_sequences(values, maxlen=max_len, value=-1)
-    dataset = np.array(dataset)
-    x = dataset[0: (dataset.shape[0] - 1), :]
+def make_x(document):
+    dataset = make_dataset(document)
+    x = dataset[0: dataset.shape[0] - 1, :]
     return x
 
+def make_dataset(document):
+    dataset = np.array(document[0:document_max_len])
+    dataset = dataset.reshape(int(document_max_len / max_len), max_len)
+    return dataset
+
+# 生成词云
+def show_word_cloud(document):
+    # 需要清楚的标点符号
+    left_words = ['.', ',', '?', '!', ';', ':', '\'', '(', ')']
+    # 生成字典
+    dic = corpora.Dictionary([document])
+    # 计算得到每个单词的使用频率
+    words_set = dic.doc2bow(document)
+
+    # 生成单词列表和使用频率列表
+    words, frequences = [], []
+    for item in words_set:
+        key = item[0]
+        frequence = item[1]
+        word = dic.get(key=key)
+        if word not in left_words:
+            words.append(word)
+            frequences.append(frequence)
+    # 使用pyecharts生成词云
+    word_cloud = WordCloud(width=1000, height=620)
+    word_cloud.add(name='Alice\'s word cloud', attr=words, value=frequences, shape='circle', word_size_range=[20, 100])
+    word_cloud.render()
+
+
 if __name__ == '__main__':
-    documents = load_dataset()
-    values, max_len, dict_len = word_to_integer(documents)
-    x_train = make_x(values, max_len)
+    document = load_dataset()
+    show_word_cloud(document)
+
+    # 将单词转换为整数
+    values = word_to_integer(document)
+    x_train = make_x(values)
     # 将数字调整到0-1之间
     x_train = x_train / float(dict_len)
     y_train = make_y(values)
     # one-hot编码
-    y_train = np_utils.to_categorical(y_train)
+    y_train = np_utils.to_categorical(y_train, dict_len)
 
-    class_num = y_train.shape[1]
-
-    model = build_model(dict_len=dict_len, words_len=max_len, class_num=class_num)
+    model = build_model()
     model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=2)
     # 存储模型到Json文件
     model_json = model.to_json()
@@ -115,3 +128,5 @@ if __name__ == '__main__':
         file.write(model_json)
     # 保存权重数值到文件
     model.save_weights(model_hd5_file)
+
+

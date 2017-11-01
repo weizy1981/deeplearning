@@ -10,3 +10,4 @@ Pillow
 pydot
 nltk
 gensim
+pyecharts
