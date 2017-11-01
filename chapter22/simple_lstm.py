@@ -5,6 +5,7 @@ from keras.layers import LSTM
 from keras.layers import Dense
 from keras.layers import Dropout
 from keras.layers.embeddings import Embedding
+from keras.layers.convolutional import Conv1D, MaxPooling1D
 import numpy as np
 from keras.utils import np_utils
 from pyecharts import WordCloud
@@ -12,11 +13,11 @@ from pyecharts import WordCloud
 filename = 'Alice.txt'
 document_split = ['.', ',', '?', '!', ';']
 batch_size = 128
-epochs = 20
+epochs = 200
 model_json_file = 'simple_model.json'
 model_hd5_file = 'simple_model.hd5'
 dict_file = 'dict_file.txt'
-dict_len = 3123
+dict_len = 2789
 max_len = 20
 document_max_len = 33200
 
@@ -35,7 +36,7 @@ def load_dataset():
                     if str == 'CHAPTER':
                         break
                     else:
-                        document.append(str)
+                        document.append(str.lower())
 
         return document
 
@@ -61,6 +62,8 @@ def word_to_integer(document):
 def build_model():
     model = Sequential()
     model.add(Embedding(input_dim=dict_len, output_dim=32, input_length=max_len))
+    model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
+    model.add(MaxPooling1D(pool_size=2))
     model.add(LSTM(units=256))
     model.add(Dropout(0.2))
     model.add(Dense(units=dict_len, activation='softmax'))
@@ -114,8 +117,6 @@ if __name__ == '__main__':
     # 将单词转换为整数
     values = word_to_integer(document)
     x_train = make_x(values)
-    # 将数字调整到0-1之间
-    x_train = x_train / float(dict_len)
     y_train = make_y(values)
     # one-hot编码
     y_train = np_utils.to_categorical(y_train, dict_len)

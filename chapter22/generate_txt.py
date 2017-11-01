@@ -2,20 +2,16 @@ from nltk import word_tokenize
 from gensim import corpora
 from keras.models import model_from_json
 import numpy as np
-from keras.preprocessing import sequence
 
-filename = 'Alice.txt'
-document_split = ['.', ',', '?', '!', ';']
-batch_size = 128
-epochs = 20
 model_json_file = 'simple_model.json'
 model_hd5_file = 'simple_model.hd5'
 dict_file = 'dict_file.txt'
-dict_len = 3123
+words = 200
 max_len = 20
-document_max_len = 33200
+myfile = 'myfile.txt'
 
 def load_dict():
+    # 从文本导入字典
     dic = corpora.Dictionary.load_from_text(dict_file)
     return dic
 
@@ -28,11 +24,11 @@ def load_model():
     model = model_from_json(model_json)
     model.load_weights(model_hd5_file)
     model.compile(loss='categorical_crossentropy', optimizer='adam')
-    model.summary()
+    # model.summary()
     return model
 
 def word_to_integer(document):
-    # 生成字典
+    # 导入字典
     dic = load_dict()
     dic_set = dic.token2id
     # 将单词转换为整数
@@ -42,24 +38,41 @@ def word_to_integer(document):
         values.append(dic_set[word])
     return values
 
-def make_y(document):
-    dataset = make_dataset(document)
-    y = dataset[1:dataset.shape[0], 0]
-    return y
-
-def make_x(document):
-    dataset = make_dataset(document)
-    x = dataset[0: dataset.shape[0] - 1, :]
-    return x
-
 def make_dataset(document):
-    dataset = np.array(document[0:document_max_len])
-    dataset = dataset.reshape(int(document_max_len / max_len), max_len)
+    dataset = np.array(document)
+    dataset = dataset.reshape(1, max_len)
     return dataset
 
+def reverse_document(values):
+    # 导入字典
+    dic = load_dict()
+    dic_set = dic.token2id
+    # 将编码转换为单词
+    document = ''
+    for value in values:
+        word = dic.get(value)
+        document = document + word + ' '
+
+    return document
 if __name__ == '__main__':
     model = load_model()
-    document = 'Alice is a little girl'
+    start_doc = 'Alice is a little girl, who has a dream to go to visit the land in the time.'
+    document = word_tokenize(start_doc.lower())
+    new_document = []
     values = word_to_integer(document)
-    print(values)
+    new_document = [] + values
+
+
+    for i in range(words):
+        x = make_dataset(values)
+        # prediction = model.predict_classes(x, verbose=0)[0]
+        prediction = model.predict(x, verbose=0)
+        prediction = np.argmax(prediction)
+        values.append(prediction)
+        new_document.append(prediction)
+        values = values[1: ]
+
+    new_document = reverse_document(new_document)
+    with open(myfile, 'w') as file:
+        file.write(new_document)
 
