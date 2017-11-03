@@ -67,7 +67,8 @@ def class_encode(data, class_indexs):
 
 def build_model(lstm_input_shape):
     model = Sequential()
-    model.add(LSTM(units=50, input_shape=lstm_input_shape))
+    model.add(LSTM(units=50, input_shape=lstm_input_shape, return_sequences=True))
+    model.add(LSTM(units=50, dropout=0.2, recurrent_dropout=0.2))
     model.add(Dense(1))
     model.compile(loss='mae', optimizer='adam')
     model.summary()
