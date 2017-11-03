@@ -6,10 +6,12 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from matplotlib import pyplot as plt
 from datetime import datetime
 
-batch_size = 24
+batch_size = 72
 epochs = 50
 # 通过过去几次的数据进行预测
-n_input = 24
+n_input = 1
+n_train_hours = 365 * 24 * 4
+n_validation_hours = 24 * 5
 filename = 'pollution_original.csv'
 
 def prase(x):
@@ -65,6 +67,7 @@ def class_encode(data, class_indexs):
 
 def build_model(lstm_input_shape):
     model = Sequential()
+    '''
     model.add(LSTM(units=128, input_shape=lstm_input_shape, return_sequences=True))
     model.add(LSTM(units=256, return_sequences=True, dropout=0.2, recurrent_dropout=0.2))
     model.add(LSTM(units=128, return_sequences=True, dropout=0.2, recurrent_dropout=0.2))
@@ -72,6 +75,10 @@ def build_model(lstm_input_shape):
     model.add(Dense(1))
     optimizer = SGD(lr=0.1, momentum=0.9, decay=0.01)
     model.compile(loss='mae', optimizer=optimizer)
+    '''
+    model.add(LSTM(units=50, input_shape=lstm_input_shape))
+    model.add(Dense(1))
+    model.compile(loss='mae', optimizer='adam')
     model.summary()
     return model
 
@@ -85,9 +92,9 @@ if __name__ == '__main__':
     values = dataset.values.astype('float32')
 
     # 分类训练与评估数据集
-    n_train_hours = len(values) - 50
+
     train = values[:n_train_hours, :]
-    validation = values[n_train_hours:, :]
+    validation = values[-n_validation_hours:, :]
     x_train, y_train = train[:, :-1], train[:, -1]
     x_validation, y_validation = validation[:, :-1], validation[:, -1]
 
