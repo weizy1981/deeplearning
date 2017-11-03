@@ -33,7 +33,7 @@ def load_dataset():
 
     return dataset
 
-def convert_dataset(data, n_input=1, dropnan=True):
+def convert_dataset(data, n_input=1, out_index=0, dropnan=True):
     n_vars = 1 if type(data) is list else data.shape[1]
     df = DataFrame(data)
     cols, names = [], []
@@ -42,7 +42,7 @@ def convert_dataset(data, n_input=1, dropnan=True):
         cols.append(df.shift(i))
         names += [('var%d(t-%d)' % (j + 1, i)) for j in range(n_vars)]
     # 输出结果 (t)
-    cols.append(df[df.columns[0]])
+    cols.append(df[df.columns[out_index]])
     names += ['result']
     # 合并输入输出序列
     result = concat(cols, axis=1)
