@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from matplotlib import pyplot as plt
 from datetime import datetime
 
-batch_size = 72
+batch_size = 24
 epochs = 50
 # 通过过去几次的数据进行预测
 n_input = 24
@@ -70,7 +70,7 @@ def build_model(lstm_input_shape):
     model.add(LSTM(units=128, return_sequences=True, dropout=0.2, recurrent_dropout=0.2))
     model.add(LSTM(units=72, dropout=0.2, recurrent_dropout=0.2))
     model.add(Dense(1))
-    optimizer = SGD(lr=0.9, momentum=0.9, decay=0.05)
+    optimizer = SGD(lr=0.1, momentum=0.9, decay=0.01)
     model.compile(loss='mae', optimizer=optimizer)
     model.summary()
     return model
