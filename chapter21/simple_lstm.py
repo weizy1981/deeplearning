@@ -1,15 +1,35 @@
-from chapter21.load_data import load_dataset
-from pandas import DataFrame, concat
+from pandas import DataFrame, concat, read_csv
 from keras.models import Sequential
 from keras.layers import LSTM, Dense
 from keras.optimizers import SGD
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from matplotlib import pyplot as plt
+from datetime import datetime
 
 batch_size = 5
 epochs = 200
 # 通过过去几次的数据进行预测
 n_input = 20
+filename = 'pollution_original.csv'
+
+def prase(x):
+    return datetime.strptime(x, '%Y %m %d %H')
+
+def load_dataset():
+    # 导入数据
+    dataset = read_csv(filename, parse_dates=[['year', 'month', 'day', 'hour']], index_col=0, date_parser=prase)
+
+    # 删除No.列
+    dataset.drop('No', axis=1, inplace=True)
+
+    # 设定列名
+    dataset.columns = ['pollution', 'dew', 'temp', 'press', 'wnd_dir', 'wnd_spd', 'snow', 'rain']
+    dataset.index.name = 'date'
+
+    # 使用中位数填充缺失值
+    dataset['pollution'].fillna(dataset['pollution'].mean(), inplace=True)
+
+    return dataset
 
 def convert_dataset(data, n_input=1, dropnan=True):
     n_vars = 1 if type(data) is list else data.shape[1]
