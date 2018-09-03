@@ -34,7 +34,7 @@ for X_batch, y_batch in imgGen.flow(X_train, y_train, batch_size=9):
     break
 
 # 图像剪切
-imgGen = ImageDataGenerator(horizontal_flip=True, vertical_flip=True)
+imgGen = ImageDataGenerator(shear_range=0.2)
 imgGen.fit(X_train)
 
 for X_batch, y_batch in imgGen.flow(X_train, y_train, batch_size=9):
